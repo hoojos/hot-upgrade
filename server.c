@@ -48,7 +48,7 @@ server_t *create_server() {
         return NULL;
     }
 
-    // add server fd to epoll
+    // 把监听的 socket 添加到 epoll
     ev.events = EPOLLIN;
     ev.data.fd = server_fd;
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, server_fd, &ev) == -1) {
