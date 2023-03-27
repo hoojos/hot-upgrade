@@ -10,10 +10,10 @@
 #include <arpa/inet.h>
 #include <sys/epoll.h>
 
-#define MAX_EVENTS 10
+#define MAX_EVENTS 1024
 #define PORT 8080
 
-int create_listen_socket() {
+int create_listen_socket(char *addr, uint16_t port) {
     int server_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (server_fd == -1) {
         perror("socket failed");
@@ -28,8 +28,8 @@ int create_listen_socket() {
 
     struct sockaddr_in address = {
         .sin_family = AF_INET,
-        .sin_addr.s_addr = INADDR_ANY,
-        .sin_port = htons(PORT)
+        .sin_addr.s_addr = inet_addr(addr),
+        .sin_port = htons(port)
     };
 
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) == -1) {
@@ -42,13 +42,13 @@ int create_listen_socket() {
         return -1;
     }
         
-    printf("Server is running on port %d\n", PORT);
+    printf("Server is running on  %s:%d\n", addr, port);
     return server_fd;
 }
 
 int main() {
     
-    int server_fd = create_listen_socket();
+    int server_fd = create_listen_socket("0.0.0.0", PORT);
 
     int epoll_fd = epoll_create1(0);
     if (epoll_fd == -1) {
