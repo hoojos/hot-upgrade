@@ -13,7 +13,7 @@
 #define MAX_EVENTS 10
 #define PORT 8080
 
-int main() {
+int create_listen_socket() {
     int server_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (server_fd == -1) {
         perror("socket failed");
@@ -41,6 +41,14 @@ int main() {
         perror("listen failed");
         return -1;
     }
+        
+    printf("Server is running on port %d\n", PORT);
+    return server_fd;
+}
+
+int main() {
+    
+    int server_fd = create_listen_socket();
 
     int epoll_fd = epoll_create1(0);
     if (epoll_fd == -1) {
@@ -56,8 +64,6 @@ int main() {
         perror("epoll_ctl: server_fd failed");
         return -1;
     }
-
-    printf("Server is running on port %d\n", PORT);
 
     while (1) {
         int nfds = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
